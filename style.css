@@ -1,143 +1,134 @@
-/* Charity: water Brand Colors & Fonts
-
-Primary Colors:
-- Yellow:     #FFC907
-- Blue:       #2E9DF7
-
-Secondary Colors:
-- Light Blue: #8BD1CB
-- Green:      #4FCB53
-- Orange:     #FF902A
-- Red:        #F5402C
-- Dark Green: #159A48
-- Pink:       #F16061
-
-Fonts:
-- Proxima Nova
-- Avenir
-
-*/
-
+/* Basic Reset */
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
 }
 
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 30px;
-  background-color: #f0f0f0;
+  background: linear-gradient(135deg, #8bd1cb, #2e9df7);
   color: #333;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  min-height: 100vh;
 }
 
 .container {
-  max-width: 750px;
-  margin: 50px auto;
-  background-color: #fff;
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 20px;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  text-align: center;
 }
 
 h1 {
-  text-align: center;
-  font-size: 30px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #333;
-}
-
-h1 img {
-  height: 50px;
-  margin-right: 15px;
-  display: block;
+  font-size: 2rem;
+  color: #FFC907;
+  margin-bottom: 10px;
 }
 
 .game-instructions {
-  font-size: 18px;
-  margin-bottom: 30px;
-  text-align: center;
+  font-size: 1rem;
+  margin-bottom: 15px;
+  color: #333;
 }
 
 .stats {
   display: flex;
   justify-content: space-around;
-  margin-bottom: 30px;
-  background-color: #f5f5f5;
-  padding: 15px 0;
-  border-radius: 8px;
-}
-
-.stats p {
-  margin: 0;
-  font-size: 18px;
+  margin-bottom: 15px;
   font-weight: bold;
-  color: #333;
+  font-size: 1rem;
 }
 
 .game-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-  margin: 0 auto;
-  max-width: 500px;
+  gap: 10px;
+  margin-bottom: 15px;
 }
 
 .grid-cell {
-  background-color: #e8e8e8;
-  border-radius: 8px;
+  background-color: #fff;
+  border-radius: 12px;
   aspect-ratio: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background-color 0.3s;
   position: relative;
-  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  transition: transform 0.2s, background-color 0.2s;
 }
 
-.water-can-wrapper {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 70px;
-  height: 70px;
-  /* Ensure the wrapper is properly centered */
+.grid-cell:hover {
+  transform: scale(1.05);
 }
 
 .water-can {
-  width: 100%;
-  height: 100%;
+  width: 70%;
+  height: 70%;
   background-image: url('img/water-can.png');
-  background-size: cover;
+  background-size: contain;
   background-repeat: no-repeat;
-  background-position: center;
   cursor: pointer;
-  border-radius: 50%;
-  animation: popUp 0.5s cubic-bezier(0.17, 0.67, 0.34, 2);
-  transform-origin: center; /* Ensure scaling happens from the center */
+  animation: popUp 0.3s ease-out;
+}
+
+.bad-drop {
+  width: 70%;
+  height: 70%;
+  background-image: url('img/bad-drop.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  animation: popUp 0.3s ease-out;
 }
 
 @keyframes popUp {
-  0% {
-    transform: scale(0.5); /* Start scaling from the center */
-  }
-  100% {
-    transform: scale(1); /* End scaling at full size */
-  }
+  0% { transform: scale(0.5); }
+  100% { transform: scale(1); }
 }
 
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
 
 button {
-  background-color: #4CAF50;
-  color: white;
+  padding: 10px 20px;
+  border-radius: 12px;
   border: none;
-  padding: 12px 24px;
-  font-size: 16px;
-  border-radius: 8px;
+  font-size: 1rem;
   cursor: pointer;
-  display: block;
-  margin: 30px auto 0;
-  transition: background-color 0.2s;
+  background-color: #4FCB53;
+  color: white;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background-color: #159A48;
+}
+
+.message {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #F5402C;
+  min-height: 24px;
+}
+
+/* Confetti canvas covers screen */
+#confetti-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
