@@ -1,15 +1,13 @@
-// -- Original logic preserved and enhanced with difficulty, milestones, and sounds --
+// -- Logic preserved + cleaned up --
 
-// Dynamic configuration (will update per difficulty)
 let GOAL = 20;
 let timer = 30;
-let spawnRate = 1000; // ms between spawns
+let spawnRate = 1000;
 let score = 0;
 let gameActive = false;
 let spawnInterval;
 let countdownInterval;
 
-// DOM
 const grid = document.getElementById('game-grid');
 const scoreEl = document.getElementById('score');
 const timerEl = document.getElementById('timer');
@@ -21,20 +19,14 @@ const ctx = confettiCanvas.getContext('2d');
 confettiCanvas.width = window.innerWidth;
 confettiCanvas.height = window.innerHeight;
 
-// Difficulty selector
 const difficultySelect = document.getElementById('difficulty');
-
-// Milestones messages array (will be computed relative to GOAL)
 let milestones = [];
 
-// --- Sounds using Web Audio API (no external files required) ---
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let audioCtx;
 function ensureAudioContext() {
   if (!audioCtx) audioCtx = new AudioCtx();
 }
-
-// Play a simple tone for feedback
 function playTone(freq = 440, type = 'sine', duration = 0.12, gain = 0.15) {
   try {
     ensureAudioContext();
@@ -50,22 +42,17 @@ function playTone(freq = 440, type = 'sine', duration = 0.12, gain = 0.15) {
       o.stop();
     }, duration * 1000);
   } catch (e) {
-    // Audio not available — silently ignore
     console.warn('Audio unavailable', e);
   }
 }
-
-// Sound wrappers
 function playCollectSound() { playTone(880, 'sine', 0.09, 0.12); }
 function playPenaltySound() { playTone(220, 'triangle', 0.14, 0.16); }
 function playWinSound() {
-  // short arpeggio
   playTone(880, 'sine', 0.09, 0.12);
   setTimeout(() => playTone(1100, 'sine', 0.09, 0.12), 120);
   setTimeout(() => playTone(1320, 'sine', 0.16, 0.12), 240);
 }
 
-// --- Grid creation (preserve original) ---
 function createGrid() {
   grid.innerHTML = '';
   for (let i = 0; i < 9; i++) {
@@ -76,21 +63,25 @@ function createGrid() {
   }
 }
 
-// --- Spawn logic (preserve click behavior) ---
 function spawnItem() {
   if (!gameActive) return;
   const cells = document.querySelectorAll('.grid-cell');
   cells.forEach(cell => (cell.innerHTML = ''));
 
   const randomCell = cells[Math.floor(Math.random() * cells.length)];
-  const itemType = Math.random() < 0.8 ? 'water-can' : 'bad-drop'; // keep 80/20
-
+  const isGood = Math.random() < 0.8;
   const div = document.createElement('div');
-  div.classList.add(itemType);
+  if (isGood) {
+    div.classList.add('good-item');
+    div.textContent = '💧';
+  } else {
+    div.classList.add('bad-item');
+    div.textContent = '❌';
+  }
 
   div.addEventListener('click', () => {
     if (!gameActive) return;
-    if (itemType === 'water-can') {
+    if (isGood) {
       score++;
       scoreEl.textContent = score;
       showMessage('+1 can!', '#4FCB53');
@@ -109,59 +100,37 @@ function spawnItem() {
   randomCell.appendChild(div);
 }
 
-// --- Difficulty handling ---
 function applyDifficulty(mode) {
-  // C = both changes requested by user
-  switch (mode) {
-    case 'easy':
-      GOAL = 10;
-      timer = 40;
-      spawnRate = 1200;
-      break;
-    case 'normal':
-      GOAL = 20;
-      timer = 30;
-      spawnRate = 1000;
-      break;
-    case 'hard':
-      GOAL = 30;
-      timer = 20;
-      spawnRate = 700;
-      break;
-    default:
-      GOAL = 20;
-      timer = 30;
-      spawnRate = 1000;
+  if (mode === 'easy') {
+    GOAL = 10; timer = 40; spawnRate = 1200;
+  } else if (mode === 'normal') {
+    GOAL = 20; timer = 30; spawnRate = 1000;
+  } else if (mode === 'hard') {
+    GOAL = 30; timer = 20; spawnRate = 700;
+  } else {
+    GOAL = 20; timer = 30; spawnRate = 1000;
   }
   goalEl.textContent = GOAL;
   timerEl.textContent = timer;
-  // compute milestones (halfway and 3/4)
   milestones = [
-    { score: Math.ceil(GOAL * 0.5), text: 'Halfway there!' },
-    { score: Math.ceil(GOAL * 0.75), text: 'Almost there!' }
+    { score: Math.ceil(GOAL * 0.5), text: 'Halfway there!', shown: false },
+    { score: Math.ceil(GOAL * 0.75), text: 'Almost there!', shown: false }
   ];
-  // clear milestone UI
   milestoneEl.textContent = '';
 }
 
-// --- Start, end, reset ---
 function startGame() {
   if (gameActive) return;
-  // If audio context is not created yet, resume on user gesture (start button)
   if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
 
   gameActive = true;
   score = 0;
-  // apply difficulty current values to ensure timer/goal sync
-  const mode = difficultySelect.value;
-  applyDifficulty(mode);
-
+  applyDifficulty(difficultySelect.value);
   scoreEl.textContent = score;
   timerEl.textContent = timer;
   messageEl.textContent = '';
   createGrid();
 
-  // First spawn immediately, then intervals
   spawnItem();
   spawnInterval = setInterval(spawnItem, spawnRate);
 
@@ -190,7 +159,6 @@ function endGame() {
 function resetGame() {
   endGame();
   score = 0;
-  // reapply difficulty so timers reflect selection
   applyDifficulty(difficultySelect.value);
   scoreEl.textContent = score;
   timerEl.textContent = timer;
@@ -199,7 +167,6 @@ function resetGame() {
   createGrid();
 }
 
-// --- Messages and milestones ---
 function showMessage(text, color) {
   messageEl.textContent = text;
   messageEl.style.color = color;
@@ -209,12 +176,10 @@ function showMessage(text, color) {
 }
 
 function checkMilestones() {
-  // show a milestone message only once per milestone
-  for (let i = 0; i < milestones.length; i++) {
-    if (!milestones[i].shown && score >= milestones[i].score) {
-      milestoneEl.textContent = milestones[i].text;
-      milestones[i].shown = true;
-      // remove milestone message after a short delay
+  for (let m of milestones) {
+    if (!m.shown && score >= m.score) {
+      milestoneEl.textContent = m.text;
+      m.shown = true;
       setTimeout(() => {
         if (gameActive) milestoneEl.textContent = '';
       }, 1500);
@@ -223,12 +188,10 @@ function checkMilestones() {
   }
 }
 
-// --- Confetti (kept & slightly improved) ---
 let confettiParticles = [];
 
 function startConfetti() {
   confettiParticles = [];
-  // ensure canvas covers current viewport
   confettiCanvas.width = window.innerWidth;
   confettiCanvas.height = window.innerHeight;
 
@@ -266,42 +229,33 @@ function updateConfetti() {
   if (confettiParticles.length > 0) requestAnimationFrame(updateConfetti);
 }
 
-// --- Win check ---
 function checkWin() {
   if (score >= GOAL) endGame();
 }
 
-// --- Event listeners ---
 document.getElementById('start-game').addEventListener('click', () => {
-  // Some browsers block WebAudio until a user gesture; ensure it starts here
   ensureAudioContext();
   if (audioCtx && audioCtx.state === 'suspended') {
-    // resume on gesture
     audioCtx.resume().then(startGame);
-  } else startGame();
+  } else {
+    startGame();
+  }
 });
 document.getElementById('reset-game').addEventListener('click', resetGame);
 
-// Update difficulty live (if changed during game, it will apply on next reset/start)
 difficultySelect.addEventListener('change', () => {
-  // If game not active immediately apply changes to shown values
-  if (!gameActive) applyDifficulty(difficultySelect.value);
-  else {
-    // If game active, change goal & spawnRate but keep current score/time
-    const prevMode = difficultySelect.value;
-    applyDifficulty(prevMode);
-    // Keep the running timer as-is (don't reset timer mid-game)
-    // But update display of goal
+  if (!gameActive) {
+    applyDifficulty(difficultySelect.value);
+  } else {
+    applyDifficulty(difficultySelect.value);
     goalEl.textContent = GOAL;
   }
 });
 
-// update canvas size on resize
 window.addEventListener('resize', () => {
   confettiCanvas.width = window.innerWidth;
   confettiCanvas.height = window.innerHeight;
 });
 
-// Initialize
 applyDifficulty(difficultySelect.value);
 createGrid();
