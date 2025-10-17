@@ -3,46 +3,77 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Arial', sans-serif;
+  font-family: 'Montserrat', Arial, sans-serif;
 }
 
 body {
   background: linear-gradient(135deg, #8bd1cb, #2e9df7);
-  color: #333;
+  color: #1b1b1b;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   padding: 20px;
   min-height: 100vh;
 }
 
 .container {
   background-color: rgba(255, 255, 255, 0.95);
-  padding: 20px;
+  padding: 22px;
   border-radius: 15px;
   width: 100%;
-  max-width: 400px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  max-width: 480px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
   text-align: center;
 }
 
 h1 {
-  font-size: 2rem;
-  color: #FFC907;
+  font-size: 1.9rem;
+  color: #0a6fbf;
   margin-bottom: 10px;
+  letter-spacing: 0.5px;
 }
 
 .game-instructions {
-  font-size: 1rem;
-  margin-bottom: 15px;
+  font-size: 0.95rem;
+  margin-bottom: 14px;
   color: #333;
+}
+
+.controls-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.difficulty-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+select#difficulty {
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  font-weight: 600;
 }
 
 .stats {
   display: flex;
-  justify-content: space-around;
-  margin-bottom: 15px;
-  font-weight: bold;
-  font-size: 1rem;
+  gap: 14px;
+  align-items: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.milestone {
+  min-height: 28px;
+  margin-bottom: 8px;
+  font-weight: 700;
+  color: #0a6fbf;
 }
 
 .game-grid {
@@ -61,37 +92,45 @@ h1 {
   justify-content: center;
   cursor: pointer;
   position: relative;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-  transition: transform 0.2s, background-color 0.2s;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+  overflow: hidden;
 }
 
 .grid-cell:hover {
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
 
-.water-can {
-  width: 70%;
-  height: 70%;
-  background-image: url('img/water-can.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  cursor: pointer;
-  animation: popUp 0.3s ease-out;
-}
-
+.water-can,
 .bad-drop {
   width: 70%;
   height: 70%;
-  background-image: url('img/bad-drop.png');
   background-size: contain;
   background-repeat: no-repeat;
   cursor: pointer;
-  animation: popUp 0.3s ease-out;
+  animation: popUp 0.25s ease-out;
+  pointer-events: auto;
+}
+
+.water-can {
+  background-image: url('img/water-can.png');
+}
+
+.bad-drop {
+  background-image: url('img/bad-drop.png');
+  filter: hue-rotate(10deg) saturate(0.9);
 }
 
 @keyframes popUp {
-  0% { transform: scale(0.5); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .buttons {
@@ -102,25 +141,27 @@ h1 {
 }
 
 button {
-  padding: 10px 20px;
+  padding: 10px 18px;
   border-radius: 12px;
   border: none;
   font-size: 1rem;
   cursor: pointer;
   background-color: #4FCB53;
   color: white;
-  transition: background 0.2s;
+  transition: background 0.18s ease, transform 0.08s ease;
+  box-shadow: 0 4px 10px rgba(79, 203, 83, 0.25);
 }
 
 button:hover {
   background-color: #159A48;
+  transform: translateY(-1px);
 }
 
 .message {
-  font-size: 1.2rem;
-  font-weight: bold;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: #F5402C;
-  min-height: 24px;
+  min-height: 26px;
 }
 
 /* Confetti canvas covers screen */
@@ -131,4 +172,19 @@ button:hover {
   width: 100%;
   height: 100%;
   pointer-events: none;
+  z-index: 999;
+}
+
+/* Footer */
+.site-footer {
+  margin-top: 18px;
+  text-align: center;
+  color: #fff;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.site-footer a {
+  color: #fff;
+  text-decoration: underline;
 }

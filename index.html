@@ -1,34 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WaterQuest</title>
-  <link rel="stylesheet" href="style.css">
+
+  <!-- Montserrat (charity: water–style feel) -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <div class="container">
     <h1>💧 WaterQuest</h1>
-    <p class="game-instructions">Collect 20 water cans before time runs out!</p>
+    <p class="game-instructions">Collect cans before time runs out to help bring clean water — inspired by charity:
+      water.</p>
 
-    <div class="stats">
-      <div>Score: <span id="score">0</span></div>
-      <div>Time: <span id="timer">30</span>s</div>
+    <div class="controls-top">
+      <div class="difficulty-group">
+        <label for="difficulty">Difficulty:</label>
+        <select id="difficulty" aria-label="Choose difficulty">
+          <option value="easy">Easy</option>
+          <option value="normal" selected>Normal</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+
+      <div class="stats" aria-live="polite">
+        <div>Score: <span id="score">0</span></div>
+        <div>Goal: <span id="goal">20</span></div>
+        <div>Time: <span id="timer">30</span>s</div>
+      </div>
     </div>
 
-    <div id="game-grid" class="game-grid"></div>
+    <div id="milestone" class="milestone" aria-live="polite"></div>
+
+    <div id="game-grid" class="game-grid" role="grid" aria-label="Game grid"></div>
 
     <div class="buttons">
       <button id="start-game">Start Game</button>
       <button id="reset-game">Reset Game</button>
     </div>
 
-    <div id="message" class="message"></div>
+    <div id="message" class="message" aria-live="polite"></div>
   </div>
 
   <!-- Confetti canvas -->
   <canvas id="confetti-canvas"></canvas>
 
+  <footer class="site-footer">
+    <p>Built for learning and to raise awareness — inspired by <strong>charity: water</strong>.</p>
+    <p>
+      <a href="https://www.charitywater.org" target="_blank" rel="noopener noreferrer">charity: water main site</a> ·
+      <a href="https://www.charitywater.org/donate" target="_blank" rel="noopener noreferrer">Donate</a>
+    </p>
+  </footer>
+
   <script src="script.js"></script>
 </body>
+
 </html>
